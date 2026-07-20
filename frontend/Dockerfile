@@ -20,4 +20,5 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 RUN npm ci --production
 EXPOSE 3000
-CMD ["npm","run","start"]
+# Use shell form so $PORT is expanded at runtime by the shell
+CMD ["sh","-c","npm run start -- -p $PORT"]
