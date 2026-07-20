@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from . import models, schemas
 from dotenv import load_dotenv
+import datetime
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
 
@@ -16,6 +17,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
+
+
+def is_admin(email: str) -> bool:
+    if not email:
+        return False
+    admins = [e.strip().lower() for e in ADMIN_EMAILS.split(',') if e.strip()]
+    return email.strip().lower() in admins
 
 # Simple public endpoints
 @router.get('/tournaments')
@@ -51,8 +59,10 @@ def create_tournament(t: schemas.TournamentCreate):
 async def join_tournament(tid: int, user_id: int = Form(...), file: UploadFile = File(...)):
     # Save file to uploads and create pending entry
     os.makedirs(UPLOADS_DIR, exist_ok=True)
-    filename = f"proof_t{tid}_u{user_id}_{file.filename}"
-    filepath = os.path.join(UPLOADS_DIR, filename)
+    safe_filename = f"proof_t{tid}_u{user_id}_{int(datetime.datetime.utcnow().timestamp())}_{file.filename}"
+    # sanitize filename basic
+    safe_filename = safe_filename.replace('..', '')
+    filepath = os.path.join(UPLOADS_DIR, safe_filename)
     with open(filepath, 'wb') as f:
         content = await file.read()
         f.write(content)
@@ -69,10 +79,10 @@ async def join_tournament(tid: int, user_id: int = Form(...), file: UploadFile =
     db.close()
     return {'message': 'Payment proof uploaded, pending admin approval', 'player_id': player.id}
 
-# Admin: list pending payments
+# Admin: list pending payments (admin only)
 @router.get('/admin/payments/pending')
-def list_pending(admin_email: str):
-    if admin_email not in ADMIN_EMAILS.split(','):
+def list_pending(admin_email: str = ''):
+    if not is_admin(admin_email):
         raise HTTPException(status_code=403, detail='Not an admin')
     db = SessionLocal()
     rows = db.query(models.TournamentPlayer).filter(models.TournamentPlayer.payment_status=='pending').all()
@@ -82,10 +92,35 @@ def list_pending(admin_email: str):
     db.close()
     return out
 
+# Admin: get payment detail (admin only)
+@router.get('/admin/payments/{player_id}')
+def get_payment_detail(player_id: int, admin_email: str = ''):
+    if not is_admin(admin_email):
+        raise HTTPException(status_code=403, detail='Not an admin')
+    db = SessionLocal()
+    p = db.query(models.TournamentPlayer).filter(models.TournamentPlayer.id==player_id).first()
+    if not p:
+        db.close()
+        raise HTTPException(status_code=404, detail='Player not found')
+    out = {
+        'id': p.id,
+        'tournament_id': p.tournament_id,
+        'user_id': p.user_id,
+        'joined_at': p.joined_at.isoformat(),
+        'payment_status': p.payment_status,
+        'payment_proof_url': p.payment_proof_url,
+        'is_confirmed': p.is_confirmed,
+        'kills': p.kills,
+        'placement': p.placement,
+        'payout_amount': float(p.payout_amount or 0)
+    }
+    db.close()
+    return out
+
 # Admin: approve payment
 @router.post('/admin/payments/{player_id}/approve')
 def approve_payment(player_id: int, req: schemas.ApproveRequest):
-    if req.admin_email not in ADMIN_EMAILS.split(','):
+    if not is_admin(req.admin_email):
         raise HTTPException(status_code=403, detail='Not an admin')
     db = SessionLocal()
     p = db.query(models.TournamentPlayer).filter(models.TournamentPlayer.id==player_id).first()
