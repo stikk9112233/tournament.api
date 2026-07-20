@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Numeric, Boolean, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, DateTime, Numeric, Boolean, ForeignKey, JSON, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
@@ -39,3 +39,18 @@ class TournamentPlayer(Base):
     kills = Column(Integer, default=0)
     placement = Column(Integer, nullable=True)
     payout_amount = Column(Numeric, default=0)
+
+class SupportTicket(Base):
+    __tablename__ = 'support_tickets'
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    email = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    subject = Column(String, nullable=False)
+    message = Column(Text, nullable=False)
+    attachment_url = Column(String, nullable=True)
+    status = Column(String, default='open')  # open / pending / closed
+    assigned_admin = Column(String, nullable=True)
+    admin_notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)

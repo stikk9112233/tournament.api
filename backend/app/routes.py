@@ -11,6 +11,9 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '..', '.en
 DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///./dev.db')
 UPLOADS_DIR = os.getenv('UPLOADS_DIR', 'uploads')
 ADMIN_EMAILS = os.getenv('ADMIN_EMAILS', '')
+SUPPORT_EMAIL = os.getenv('SUPPORT_EMAIL', '')
+SUPPORT_PHONE = os.getenv('SUPPORT_PHONE', '')
+SUPPORT_WHATSAPP = os.getenv('SUPPORT_WHATSAPP', '')
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False} if 'sqlite' in DATABASE_URL else {})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -132,3 +135,83 @@ def approve_payment(player_id: int, req: schemas.ApproveRequest):
     db.commit()
     db.close()
     return {'message': 'Approved'}
+
+# --- Support ticket endpoints ---
+@router.post('/support/ticket')
+async def create_ticket(user_id: int = Form(None), email: str = Form(''), phone: str = Form(''), subject: str = Form(...), message: str = Form(...), file: UploadFile = File(None)):
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
+    attachment_path = None
+    if file:
+        safe_filename = f"support_{int(datetime.datetime.utcnow().timestamp())}_{file.filename}".replace('..','')
+        attachment_path = os.path.join(UPLOADS_DIR, safe_filename)
+        with open(attachment_path, 'wb') as f:
+            content = await file.read()
+            f.write(content)
+    db = SessionLocal()
+    ticket = models.SupportTicket(user_id=user_id, email=email, phone=phone, subject=subject, message=message, attachment_url=attachment_path, status='open')
+    db.add(ticket)
+    db.commit()
+    db.refresh(ticket)
+    db.close()
+    # Optionally: send notification to SUPPORT_EMAIL (not implemented)
+    return {'message': 'Ticket created', 'ticket_id': ticket.id}
+
+@router.get('/admin/support/pending')
+def list_support_pending(admin_email: str = ''):
+    if not is_admin(admin_email):
+        raise HTTPException(status_code=403, detail='Not an admin')
+    db = SessionLocal()
+    rows = db.query(models.SupportTicket).filter(models.SupportTicket.status!='closed').all()
+    out = []
+    for r in rows:
+        out.append({'id': r.id, 'user_id': r.user_id, 'email': r.email, 'subject': r.subject, 'status': r.status, 'attachment_url': r.attachment_url})
+    db.close()
+    return out
+
+@router.get('/admin/support/{ticket_id}')
+def get_support_detail(ticket_id: int, admin_email: str = ''):
+    if not is_admin(admin_email):
+        raise HTTPException(status_code=403, detail='Not an admin')
+    db = SessionLocal()
+    t = db.query(models.SupportTicket).filter(models.SupportTicket.id==ticket_id).first()
+    if not t:
+        db.close()
+        raise HTTPException(status_code=404, detail='Ticket not found')
+    out = {
+        'id': t.id,
+        'user_id': t.user_id,
+        'email': t.email,
+        'phone': t.phone,
+        'subject': t.subject,
+        'message': t.message,
+        'attachment_url': t.attachment_url,
+        'status': t.status,
+        'assigned_admin': t.assigned_admin,
+        'admin_notes': t.admin_notes,
+        'created_at': t.created_at.isoformat()
+    }
+    db.close()
+    return out
+
+@router.post('/admin/support/{ticket_id}/reply')
+def reply_support(ticket_id: int, admin_email: str = Form(...), reply: str = Form(''), close: bool = Form(False)):
+    if not is_admin(admin_email):
+        raise HTTPException(status_code=403, detail='Not an admin')
+    db = SessionLocal()
+    t = db.query(models.SupportTicket).filter(models.SupportTicket.id==ticket_id).first()
+    if not t:
+        db.close()
+        raise HTTPException(status_code=404, detail='Ticket not found')
+    # Append admin note
+    note = f"[{admin_email} @ {datetime.datetime.utcnow().isoformat()}] {reply}\n"
+    if t.admin_notes:
+        t.admin_notes = t.admin_notes + "\n" + note
+    else:
+        t.admin_notes = note
+    t.assigned_admin = admin_email
+    if close:
+        t.status = 'closed'
+    db.commit()
+    db.close()
+    # Optionally: send reply to user's email/notification (not implemented)
+    return {'message': 'Reply saved'}
