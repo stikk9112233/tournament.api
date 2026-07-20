@@ -1,0 +1,9 @@
+# Byte-compiled / env
+__pycache__/
+venv/
+.env
+.env.*
+backend/dev.db
+frontend/node_modules/
+frontend/.next/
+uploads/
