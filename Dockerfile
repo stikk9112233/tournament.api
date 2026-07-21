@@ -4,6 +4,8 @@ WORKDIR /app
 
 # install python3 and pip (and build tools if native modules needed)
 RUN apk add --no-cache python3 py3-pip build-base
+# ensure pip points to pip3
+RUN ln -s /usr/bin/pip3 /usr/bin/pip || true
 
 COPY package*.json ./
 RUN npm ci
@@ -17,6 +19,8 @@ ENV NODE_ENV=production
 
 # install python in runner too if runtime needs pip
 RUN apk add --no-cache python3 py3-pip
+# ensure pip points to pip3 in runner
+RUN ln -s /usr/bin/pip3 /usr/bin/pip || true
 
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
