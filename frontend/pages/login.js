@@ -1,4 +1,4 @@
-import {useState} from 'react'
+dimport {useState} from 'react'
 import axios from 'axios'
 
 export default function Login(){
@@ -29,4 +29,9 @@ export default function Login(){
       </div>
     </div>
   )
+}
+export async function getStaticProps() {
+  return {
+    revalidate: false,
+  };
 }
