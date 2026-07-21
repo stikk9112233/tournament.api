@@ -53,7 +53,7 @@
 }
 
 /* Buttons */
-button[type="submit"] {
+.submitButton {
   width: 100%;
   padding: 12px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -67,16 +67,16 @@ button[type="submit"] {
   margin-top: 20px;
 }
 
-button[type="submit"]:hover:not(:disabled) {
+.submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
 }
 
-button[type="submit"]:active:not(:disabled) {
+.submitButton:active:not(:disabled) {
   transform: translateY(0);
 }
 
-button[type="submit"]:disabled {
+.submitButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
