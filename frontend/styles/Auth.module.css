@@ -100,7 +100,7 @@
 }
 
 /* Button styles */
-button[type="submit"] {
+:global(button[type="submit"]) {
   padding: 12px 30px;
   border: none;
   border-radius: 8px;
@@ -112,7 +112,15 @@ button[type="submit"] {
   letter-spacing: 1px;
 }
 
-button[type="submit"]:disabled {
+:global(button[type="submit"]:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+:global(button[type="submit"]:hover:not(:disabled)) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+}
   opacity: 0.6;
   cursor: not-allowed;
 }
