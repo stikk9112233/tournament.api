@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useContext } from 'react';
-import { AuthContext } from '../pages/_app';
+import { AuthContext } from '../context/auth';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
