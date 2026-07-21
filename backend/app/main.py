@@ -12,9 +12,13 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok", "service": "tournament-api"}
 
 # Initialize database
 @app.on_event("startup")
@@ -29,10 +33,6 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(tournaments.router, prefix="/api/tournaments", tags=["tournaments"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
-
-@app.get("/api/health")
-def health_check():
-    return {"status": "ok", "service": "tournament-api"}
 
 if __name__ == "__main__":
     import uvicorn
