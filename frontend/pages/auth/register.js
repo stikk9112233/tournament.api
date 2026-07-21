@@ -140,3 +140,8 @@ export default function Register() {
     </>
   );
 }
+export async function getStaticProps() {
+  return {
+    revalidate: false,
+  };
+}
