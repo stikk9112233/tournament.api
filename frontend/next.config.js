@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  **next.config.js** repoMinify: true,
+  repoMinify: true,
   experimental: {
     esmExternals: true,
   },
