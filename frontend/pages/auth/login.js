@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
-import { AuthContext } from '../_app';
+import { AuthContext } from '../../context/auth';
 import Navbar from '../../components/Navbar';
 import apiClient from '../../utils/api';
 import styles from '../../styles/Auth.module.css';
