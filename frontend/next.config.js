@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  sw# 🔴 **Error: File पहले से exist करती है!**
-
-**next.config.js** पहले से repocMinify: true,
+  
+  **next.config.js** repoMinify: true,
   experimental: {
     esmExternals: true,
   },
