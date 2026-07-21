@@ -103,3 +103,8 @@ export default function Login() {
     </>
   );
 }
+export async function getStaticProps() {
+  return {
+    revalidate: false,
+  };
+}
