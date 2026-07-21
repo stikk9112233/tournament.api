@@ -148,6 +148,73 @@ export const apiClient = {
     });
     return response.json();
   },
-};
+  // Tournament API Methods
+  tournaments: {
+    list: async () => {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments`, {
+        method: 'GET',
+        headers: apiClient.getHeaders(),
+      });
+      return response.json();
+    },
+    
+    get: async (id) => {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments/${id}`, {
+        method: 'GET',
+        headers: apiClient.getHeaders(),
+      });
+      return response.json();
+    },
+    
+    create: async (data) => {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments`, {
+        method: 'POST',
+        headers: apiClient.getHeaders(),
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+    
+    update: async (id, data) => {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments/${id}`, {
+        method: 'PUT',
+        headers: apiClient.getHeaders(),
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+    
+    delete: async (id) => {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments/${id}`, {
+        method: 'DELETE',
+        headers: apiClient.getHeaders(),
+      });
+      return response.json();
+    },
+    
+    getParticipants: async (id) => {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments/${id}/participants`, {
+        method: 'GET',
+        headers: apiClient.getHeaders(),
+      });
+      return response.json();
+    },
+    
+    register: async (id) => {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments/${id}/register`, {
+        method: 'POST',
+        headers: apiClient.getHeaders(),
+      });
+      return response.json();
+    },
+    
+    unregister: async (id) => {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments/${id}/register`, {
+        method: 'DELETE',
+        headers: apiClient.getHeaders(),
+      });
+      return response.json();
+    },
+  },};
 
 export default apiClient;
