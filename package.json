@@ -1,12 +1,9 @@
-{
-  "name": "tournament-api-monorepo-root",
-  "private": true,
-  "scripts": {
-    "build": "cd frontend && npm install && npm run build",
-    "start": "cd backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port $PORT",
-    "heroku-postbuild": "cd frontend && npm install && npm run build"
-  },
-  "engines": {
-    "node": "20.x"
-  }
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start -p $PORT",
+  "lint": "next lint"
+},
+"engines": {
+  "node": "24.x"
 }
