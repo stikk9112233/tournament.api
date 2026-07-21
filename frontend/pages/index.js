@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from './_app';
+import { AuthContext } from '../context/auth';
 import Navbar from '../components/Navbar';
 import apiClient from '../utils/api';
 import styles from '../styles/Home.module.css';
