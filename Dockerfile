@@ -29,10 +29,6 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
-# Also copy installed backend packages if any (installed in builder into global site-packages)
-# If backend packages are installed to system site-packages in builder, they may not carry over.
-# Safer: install backend requirements again in runner if needed (optional)
-# RUN python3 -m pip install --no-cache-dir -r /app/backend/requirements.txt || true
 
 EXPOSE 3000
 CMD ["npm", "start"]
