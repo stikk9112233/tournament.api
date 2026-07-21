@@ -121,14 +121,6 @@
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
 }
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-button[type="submit"]:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
-}
 
 /* Responsive */
 @media (max-width: 768px) {
