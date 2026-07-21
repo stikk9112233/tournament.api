@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament API Testing 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: #ff6b6b;
+            transform: scale(1.05);
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .response {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+            border-left: 4px solid #667eea;
+        }
+        
+        .response.show {
+            display: block;
+        }
+        
+        .response.success {
+            border-left-color: #51cf66;
+            background: #f0fdf4;
+        }
+        
+        .response.error {
+            border-left-color: #ff6b6b;
+            background: #fef2f2;
+        }
+        
+        .response h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .response pre {
+            background: white;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+            color: #333;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .info-box p {
+            color: #1565c0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .token-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .token-box p {
+            color: #856404;
+            font-size: 12px;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+        
+        .success-box {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #22c55e;
+        }
+        
+        .success-box p {
+            color: #166534;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Tournament API Testing</h1>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'register')">📝 Register</button>
+            <button class="tab-btn" onclick="switchTab(event, 'login')">🔐 Login</button>
+            <button class="tab-btn" onclick="switchTab(event, 'create')">🏆 Create Tournament</button>
+            <button class="tab-btn" onclick="switchTab(event, 'list')">📋 List Tournaments</button>
+            <button class="tab-btn" onclick="switchTab(event, 'health')">💚 Health Check</button>
+        </div>
+        
+        <!-- REGISTER TAB -->
+        <div id="register" class="tab-content active">
+            <h2>📝 User Registration</h2>
+            <div class="info-box">
+                <p><strong>Step 1:</strong> यहाँ अपनी information भरो और Register करो। Password strong होना चाहिए!</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="reg_email" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" id="reg_username" placeholder="sunny123">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="reg_password" placeholder="SecurePass@123">
+            </div>
+            <div class="form-group">
+                <label>Freefire UID:</label>
+                <input type="text" id="reg_freefire_uid" placeholder="1234567890">
+            </div>
+            <button onclick="register()">✅ Register करो</button>
+            
+            <div id="registerResponse" class="response"></div>
+        </div>
+        
+        <!-- LOGIN TAB -->
+        <div id="login" class="tab-content">
+            <h2>🔐 User Login</h2>
+            <div class="info-box">
+                <p><strong>Step 2:</strong> अपना Email और Password दो। Token मिलेगा जिसे हर request में use करना है।</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="login_email" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="login_password" placeholder="SecurePass@123">
+            </div>
+            <button onclick="login()">✅ Login करो</button>
+            
+            <div id="loginResponse" class="response"></div>
+        </div>
+        
+        <!-- CREATE TOURNAMENT TAB -->
+        <div id="create" class="tab-content">
+            <h2>🏆 Create Tournament</h2>
+            <div class="info-box">
+                <p><strong>Step 3:</strong> पहले Login करके Token copy करो। फिर यहाँ Tournament की details दो।</p>
+            </div>
+            
+            <div class="token-box">
+                <label><strong>🔑 Authorization Token (Login से मिलेगा):</strong></label>
+                <p id="tokenDisplay">Token यहाँ दिखेगा...</p>
+                <input type="text" id="auth_token" placeholder="Token paste करो" style="font-size: 12px;">
+            </div>
+            
+            <div class="form-group">
+                <label>Tournament Title:</label>
+                <input type="text" id="tournament_title" placeholder="Freefire Elite 2026">
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea id="tournament_description" placeholder="Tournament का description लिखो"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Entry Fee (₹):</label>
+                <input type="number" id="entry_fee" placeholder="50">
+            </div>
+            <div class="form-group">
+                <label>Prize Pool (₹):</label>
+                <input type="number" id="prize_pool" placeholder="5000">
+            </div>
+            <div class="form-group">
+                <label>Max Participants:</label>
+                <input type="number" id="max_participants" placeholder="50">
+            </div>
+            <div class="form-group">
+                <label>UPI ID:</label>
+                <input type="text" id="upi_id" placeholder="sunny@paytm">
+            </div>
+            <div class="form-group">
+                <label>Start Date:</label>
+                <input type="datetime-local" id="start_date">
+            </div>
+            <div class="form-group">
+                <label>End Date:</label>
+                <input type="datetime-local" id="end_date">
+            </div>
+            <button onclick="createTournament()">✅ Tournament Create करो</button>
+            
+            <div id="createResponse" class="response"></div>
+        </div>
+        
+        <!-- LIST TOURNAMENTS TAB -->
+        <div id="list" class="tab-content">
+            <h2>📋 List All Tournaments</h2>
+            <div class="info-box">
+                <p><strong>Step 4:</strong> सभी Active Tournaments को देखो।</p>
+            </div>
+            
+            <button onclick="listTournaments()">📋 Tournaments Load करो</button>
+            
+            <div id="listResponse" class="response"></div>
+        </div>
+        
+        <!-- HEALTH CHECK TAB -->
+        <div id="health" class="tab-content">
+            <h2>💚 API Health Check</h2>
+            <div class="success-box">
+                <p><strong>✅ API URL:</strong> https://tournamentapi-production-4846.up.railway.app</p>
+            </div>
+            <div class="info-box">
+                <p><strong>Check करो:</strong> क्या API सही तरीके से काम कर रहा है?</p>
+            </div>
+            
+            <button onclick="healthCheck()">💚 Health Check करो</button>
+            
+            <div id="healthResponse" class="response"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'https://tournamentapi-production-4846.up.railway.app';
+        
+        function switchTab(event, tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function showResponse(elementId, data, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.classList.add('show');
+            element.classList.toggle('success', isSuccess);
+            element.classList.toggle('error', !isSuccess);
+            
+            const status = isSuccess ? '✅ Success' : '❌ Error';
+            element.innerHTML = `
+                <h4>${status}</h4>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+        
+        async function register() {
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('reg_email').value,
+                        username: document.getElementById('reg_username').value,
+                        password: document.getElementById('reg_password').value,
+                        freefire_uid: document.getElementById('reg_freefire_uid').value
+                    })
+                });
+                
+                const data = await response.json();
+                showResponse('registerResponse', data, response.ok);
+            } catch (error) {
+                showResponse('registerResponse', { error: error.message }, false);
+            }
+        }
+        
+        async function login() {
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('login_email').value,
+                        password: document.getElementById('login_password').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.access_token) {
+                    document.getElementById('auth_token').value = data.access_token;
+                    document.getElementById('tokenDisplay').textContent = `✅ Token: ${data.access_token.substring(0, 50)}...`;
+                }
+                
+                showResponse('loginResponse', data, response.ok);
+            } catch (error) {
+                showResponse('loginResponse', { error: error.message }, false);
+            }
+        }
+        
+        async function createTournament() {
+            const token = document.getElementById('auth_token').value;
+            
+            if (!token) {
+                alert('⚠️ पहले Login करके Token copy करो!');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/tournaments/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        title: document.getElementById('tournament_title').value,
+                        description: document.getElementById('tournament_description').value,
+                        entry_fee: parseFloat(document.getElementById('entry_fee').value),
+                        prize_pool: parseFloat(document.getElementById('prize_pool').value),
+                        max_participants: parseInt(document.getElementById('max_participants').value),
+                        upi_id: document.getElementById('upi_id').value,
+                        start_date: document.getElementById('start_date').value,
+                        end_date: document.getElementById('end_date').value
+                    })
+                });
+                
+                const data = await response.json();
+                showResponse('createResponse', data, response.ok);
+            } catch (error) {
+                showResponse('createResponse', { error: error.message }, false);
+            }
+        }
+        
+        async function listTournaments() {
+            try {
+                const response = await fetch(`${API_BASE}/api/tournaments/?skip=0&limit=10&status_filter=active`);
+                const data = await response.json();
+                showResponse('listResponse', data, response.ok);
+            } catch (error) {
+                showResponse('listResponse', { error: error.message }, false);
+            }
+        }
+        
+        async function healthCheck() {
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                const data = await response.json();
+                showResponse('healthResponse', data, response.ok);
+            } catch (error) {
+                showResponse('healthResponse', { error: error.message }, false);
+            }
+        }
+    </script>
+</body>
+</html>
