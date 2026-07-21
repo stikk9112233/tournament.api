@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "cd frontend && npm install && npm run build",
-    "start": "cd backend && npm install && node server.js",
+    "start": "cd backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port $PORT",
     "heroku-postbuild": "cd frontend && npm install && npm run build"
   },
   "engines": {
