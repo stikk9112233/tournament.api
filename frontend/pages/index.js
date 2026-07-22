@@ -171,8 +171,4 @@ const { user, token } = auth;
     </>
   );
 }
-export async function getStaticProps() {
-  return {
-    revalidate: false,
-  };
-}
+
