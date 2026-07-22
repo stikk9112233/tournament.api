@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  repoMinify: true,
+  swcMinify: true,
   experimental: {
     esmExternals: true,
   },
