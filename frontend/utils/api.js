@@ -1,4 +1,4 @@
-const API_BASE = 'https://tournamentapi-production-4846.up.railway.app/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://tournamentapi-production-4846.up.railway.app/api';
 
 export const apiClient = {
   tournaments: {
