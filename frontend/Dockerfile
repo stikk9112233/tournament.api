@@ -1,4 +1,4 @@
-# frontend/Dockerfile - quick fix: use npm install
+# frontend/Dockerfile
 FROM node:18-alpine AS builder
 WORKDIR /app
 
@@ -12,12 +12,9 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
-
-RUN npm install --production
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 3000
-CMD ["sh","-c","npm run start -- -p $PORT"]
+CMD ["npm", "start"]
