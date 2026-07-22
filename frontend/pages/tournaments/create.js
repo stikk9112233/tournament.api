@@ -8,7 +8,8 @@ import styles from '../../styles/CreateTournament.module.css';
 
 export default function CreateTournamentPage() {
   const router = useRouter();
-  const { token } = useContext(AuthContext);
+  const auth = useContext(AuthContext) || {};
+const { token } = auth;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
