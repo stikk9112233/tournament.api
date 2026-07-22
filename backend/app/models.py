@@ -11,8 +11,7 @@ class User(Base):
     password_hash = Column(String)
     username = Column(String, unique=True, index=True)
     freefire_uid = Column(String, unique=True, nullable=True)
-    created_at =     reset_token = Column(String, nullable=True, unique=True)
-    reset_token_expires = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
     # Password reset fields
     reset_token = Column(String, nullable=True, unique=True)
     reset_token_expires = Column(DateTime, nullable=True)
