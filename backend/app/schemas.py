@@ -9,9 +9,12 @@ class UserCreate(BaseModel):
     password: str
     freefire_uid: Optional[str] = None
 
-class UserLogin(BaseModel):
+class ForgotPasswordRequest(BaseModel):
     email: str
-    password: str
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
 
 class UserResponse(BaseModel):
     id: int
