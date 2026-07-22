@@ -9,7 +9,8 @@ import styles from '../../styles/Tournaments.module.css';
 
 export default function TournamentsPage() {
   const router = useRouter();
-  const { token, user } = useContext(AuthContext);
+  const auth = useContext(AuthContext) || {};
+const { token, user } = auth;
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
