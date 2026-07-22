@@ -9,12 +9,9 @@ class UserCreate(BaseModel):
     password: str
     freefire_uid: Optional[str] = None
 
-class ForgotPasswordRequest(BaseModel):
+class UserLogin(BaseModel):
     email: str
-
-class ResetPasswordRequest(BaseModel):
-    token: str
-    new_password: str
+    password: str
 
 class UserResponse(BaseModel):
     id: int
@@ -25,6 +22,14 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Password reset request schemas
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
 
 # Tournament Schemas
 class TournamentCreate(BaseModel):
