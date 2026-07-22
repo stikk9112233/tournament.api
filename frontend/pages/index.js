@@ -7,7 +7,8 @@ import apiClient from '../utils/api';
 import styles from '../styles/Home.module.css';
 
 export default function Home() {
-  const { user, token } = useContext(AuthContext);
+  const auth = useContext(AuthContext) || {};
+const { user, token } = auth; 
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
 
