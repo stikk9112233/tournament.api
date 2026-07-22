@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 export default function Login() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [msg, setMsg] = useState('')
@@ -9,8 +11,16 @@ export default function Login() {
   const submit = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('/api/proxy/auth/login', { email, password: pass })
+      const res = await axios.post('/api/proxy/auth/login', { email, password: pass })
       setMsg('Logged in')
+      // Save token if backend returns it
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token)
+      }
+      // Redirect to dashboard after 1 second
+      setTimeout(() => {
+        router.push('/')
+      }, 1000)
     } catch (err) {
       setMsg('Login failed')
     }
