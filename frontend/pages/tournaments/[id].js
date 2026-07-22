@@ -10,7 +10,8 @@ import styles from '../../styles/TournamentDetail.module.css';
 export default function TournamentDetailPage() {
   const router = useRouter();
   const { id } = router.query;
-  const { token, user } = useContext(AuthContext);
+  const auth = useContext(AuthContext) || {};
+const { token, user } = auth;
   const [tournament, setTournament] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(true);
