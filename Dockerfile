@@ -8,7 +8,7 @@ RUN apk add --no-cache python3 py3-pip build-base
 RUN ln -s /usr/bin/pip3 /usr/bin/pip || true
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 RUN npm run build
 
