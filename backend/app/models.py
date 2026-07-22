@@ -12,6 +12,9 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     freefire_uid = Column(String, unique=True, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    # Password reset fields
+    reset_token = Column(String, nullable=True, unique=True)
+    reset_token_expires = Column(DateTime, nullable=True)
     
     tournaments = relationship("Tournament", back_populates="organizer")
     participants = relationship("Participant", back_populates="user")
