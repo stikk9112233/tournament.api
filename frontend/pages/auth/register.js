@@ -141,8 +141,4 @@ const { login } = auth;
     </>
   );
 }
-export async function getStaticProps() {
-  return {
-    revalidate: false,
-  };
-}
+
