@@ -103,9 +103,4 @@ const { login } = auth;
       </div>
     </>
   );
-}
-export async function getStaticProps() {
-  return {
-    revalidate: false,
-  };
-}
+};
