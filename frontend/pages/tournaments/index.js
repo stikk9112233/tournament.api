@@ -16,12 +16,13 @@ const { token, user, loading: authLoading } = auth;
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!token) {
-      router.push('/auth/login');
-      return;
-    }
-    fetchTournaments();
-  }, [token]);
+  if (authLoading) return; // wait until auth provider finished loading
+  if (!token) {
+    router.push('/auth/login');
+    return;
+  }
+  fetchTournaments();
+}, [token, authLoading]);
 
   const fetchTournaments = async () => {
     try {
