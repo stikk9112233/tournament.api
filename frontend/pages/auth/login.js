@@ -9,7 +9,8 @@ import styles from '../../styles/Auth.module.css';
 
 export default function Login() {
   const router = useRouter();
-  const { login } = useContext(AuthContext);
+  const auth = useContext(AuthContext) || {};
+const { login } = auth;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
