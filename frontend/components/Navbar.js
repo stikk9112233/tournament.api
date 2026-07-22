@@ -4,7 +4,8 @@ import { AuthContext } from '../context/auth';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
-  const { user, logout } = useContext(AuthContext);
+  const auth = useContext(AuthContext) || {};
+const { user, logout } = auth;
 
   return (
     <nav className={styles.navbar}>
