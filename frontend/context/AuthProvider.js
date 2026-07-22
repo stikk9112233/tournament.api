@@ -6,32 +6,51 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load token from localStorage on mount
+  // Load token from localStorage on mount (safe for SSR)
   useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    
-    if (savedToken) {
-      setToken(savedToken);
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
+    try {
+      if (typeof window !== 'undefined') {
+        const savedToken = localStorage.getItem('token');
+        const savedUser = localStorage.getItem('user');
+        if (savedToken) {
+          setToken(savedToken);
+        }
+        if (savedUser) {
+          setUser(JSON.parse(savedUser));
+        }
       }
+    } catch (err) {
+      console.error('Error loading auth from localStorage', err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  const login = (userData, authToken) => {
-    setUser(userData);
+  // NOTE: login(authToken, userData)
+  const login = (authToken, userData) => {
     setToken(authToken);
-    localStorage.setItem('token', authToken);
-    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData || null);
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', authToken);
+        if (userData) localStorage.setItem('user', JSON.stringify(userData));
+      }
+    } catch (err) {
+      console.error('Error saving auth to localStorage', err);
+    }
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    } catch (err) {
+      console.error('Error clearing auth from localStorage', err);
+    }
   };
 
   const value = {
