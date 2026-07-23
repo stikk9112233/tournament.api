@@ -1,16 +1,13 @@
-{
+ {
   "name": "tournament.api",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm install && npm run build",
-    "start": "cd frontend && npm run start"
+    "start": "cd frontend && npm run start",
+    "postinstall": "cd frontend && npm install"
   },
-  "dependencies": {
-    "next": "^13.4.10",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "axios": "^1.4.0"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
