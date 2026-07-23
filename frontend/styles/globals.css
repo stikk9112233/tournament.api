@@ -56,8 +56,7 @@ select {
 }
 
 .loader {
-  @apply text-center py-8;
-  color: var(--cyan);
+  @apply text-center py-8 text-cyan-400;
 }
 
 ::-webkit-scrollbar {
