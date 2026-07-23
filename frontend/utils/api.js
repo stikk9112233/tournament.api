@@ -1,162 +1,93 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://tournamentapi-production-4846.up.railway.app/api';
+import axios from 'axios';
 
-export const apiClient = {
-  tournaments: {
-    list: async (skip = 0, limit = 10, status_filter = null) => {
-      try {
-        const params = new URLSearchParams();
-        params.append('skip', skip);
-        params.append('limit', limit);
-        if (status_filter) params.append('status_filter', status_filter);
-        
-        const response = await fetch(`${API_BASE}/tournaments?${params}`);
-        if (!response.ok) throw new Error('Failed to fetch tournaments');
-        return await response.json();
-      } catch (error) {
-        console.error('Error fetching tournaments:', error);
-        return [];
-      }
-    },
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-    get: async (id) => {
-      try {
-        const response = await fetch(`${API_BASE}/tournaments/${id}`);
-        if (!response.ok) throw new Error('Tournament not found');
-        return await response.json();
-      } catch (error) {
-        console.error('Error fetching tournament:', error);
-        return null;
-      }
-    },
-
-    create: async (data, token) => {
-      try {
-        const response = await fetch(`${API_BASE}/tournaments/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(data)
-        });
-        if (!response.ok) throw new Error('Failed to create tournament');
-        return await response.json();
-      } catch (error) {
-        console.error('Error creating tournament:', error);
-        return null;
-      }
-    },
-
-    join: async (id, freefire_uid, file) => {
-      try {
-        const formData = new FormData();
-        formData.append('freefire_uid', freefire_uid);
-        formData.append('file', file);
-
-        const response = await fetch(`${API_BASE}/tournaments/${id}/join`, {
-          method: 'POST',
-          body: formData
-        });
-        if (!response.ok) throw new Error('Failed to join tournament');
-        return await response.json();
-      } catch (error) {
-        console.error('Error joining tournament:', error);
-        return null;
-      }
-    },
-
-    // ============ LEADERBOARD & HISTORY ============
-    getDetails: async (tournamentId) => {
-      try {
-        const response = await fetch(`${API_BASE}/tournaments/${tournamentId}/details`);
-        if (!response.ok) throw new Error('Tournament not found');
-        return await response.json();
-      } catch (error) {
-        console.error('❌ Error fetching tournament details:', error);
-        throw error;
-      }
-    },
-
-    getParticipants: async (tournamentId) => {
-      try {
-        const response = await fetch(`${API_BASE}/tournaments/${tournamentId}/participants`);
-        if (!response.ok) throw new Error('Failed to fetch participants');
-        return await response.json();
-      } catch (error) {
-        console.error('❌ Error fetching participants:', error);
-        throw error;
-      }
-    },
-
-    enterMatchScores: async (matchId, scores) => {
-      try {
-        const response = await fetch(`${API_BASE}/tournaments/${matchId}/enter-score`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(scores)
-        });
-        if (!response.ok) throw new Error('Failed to enter scores');
-        return await response.json();
-      } catch (error) {
-        console.error('❌ Error entering match scores:', error);
-        throw error;
-      }
-    },
-
-    getLeaderboard: async (tournamentId, userId) => {
-      try {
-        const response = await fetch(`${API_BASE}/tournaments/${tournamentId}/leaderboard/${userId}`);
-        if (!response.ok) throw new Error('Failed to fetch leaderboard');
-        return await response.json();
-      } catch (error) {
-        console.error('❌ Error fetching leaderboard:', error);
-        throw error;
-      }
-    },
-
-    getPlayingHistory: async (userId) => {
-      try {
-        const response = await fetch(`${API_BASE}/tournaments/${userId}/playing-history`);
-        if (!response.ok) throw new Error('Failed to fetch playing history');
-        return await response.json();
-      } catch (error) {
-        console.error('❌ Error fetching playing history:', error);
-        throw error;
-      }
-    }
+const api = axios.create({
+  baseURL: `${API_URL}/api`,
+  headers: {
+    'Content-Type': 'application/json',
   },
+});
 
-  auth: {
-    login: async (email, password) => {
-      try {
-        const response = await fetch(`${API_BASE}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        if (!response.ok) throw new Error('Login failed');
-        return await response.json();
-      } catch (error) {
-        console.error('Error logging in:', error);
-        return null;
-      }
-    },
-
-    register: async (email, username, password) => {
-      try {
-        const response = await fetch(`${API_BASE}/auth/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, username, password })
-        });
-        if (!response.ok) throw new Error('Registration failed');
-        return await response.json();
-      } catch (error) {
-        console.error('Error registering:', error);
-        return null;
-      }
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
   }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/auth/login';
+      }
+    }
+    throw error;
+  }
+);
+
+const apiClient = {
+  auth: {
+    register: (email, username, password, freefire_uid) =>
+      api.post('/auth/register', { email, username, password, freefire_uid }),
+    
+    login: (email, password) =>
+      api.post('/auth/login', { email, password }),
+    
+    getMe: () => api.get('/auth/me'),
+    
+    forgotPassword: (email) =>
+      api.post('/auth/forgot-password', { email }),
+    
+    resetPassword: (token, new_password) =>
+      api.post('/auth/reset-password', { token, new_password }),
+  },
+
+  tournaments: {
+    list: (skip = 0, limit = 10) =>
+      api.get(`/tournaments?skip=${skip}&limit=${limit}`),
+    
+    get: (id) => api.get(`/tournaments/${id}`),
+    
+    create: (data) => api.post('/tournaments', data),
+    
+    update: (id, data) => api.put(`/tournaments/${id}`, data),
+    
+    delete: (id) => api.delete(`/tournaments/${id}`),
+    
+    join: (id, freefire_uid, file) => {
+      const formData = new FormData();
+      formData.append('freefire_uid', freefire_uid);
+      formData.append('file', file);
+      return api.post(`/tournaments/${id}/join`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    },
+
+    getParticipants: (id) =>
+      api.get(`/tournaments/${id}/participants`),
+    
+    getPending: (id) =>
+      api.get(`/tournaments/${id}/pending`),
+    
+    approveParticipant: (tournamentId, participantId) =>
+      api.post(`/tournaments/${tournamentId}/participants/${participantId}/approve`),
+    
+    rejectParticipant: (tournamentId, participantId) =>
+      api.post(`/tournaments/${tournamentId}/participants/${participantId}/reject`),
+  },
+
+  users: {
+    get: (id) => api.get(`/users/${id}`),
+    getProfile: () => api.get('/users/me/profile'),
+  },
 };
 
 export default apiClient;
