@@ -1,0 +1,325 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  color: white;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+  font-size: 1rem;
+  margin-top: 10px;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.error {
+  color: #e74c3c;
+  background: #fadbd8;
+  border: 2px solid #e74c3c;
+}
+
+.success {
+  color: #27ae60;
+  background: #d5f4e6;
+  border: 2px solid #27ae60;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.form {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.scoresContainer {
+  margin-bottom: 30px;
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.scoresTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.scoresTable thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+}
+
+.scoresTable th {
+  padding: 20px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1rem;
+  border-bottom: 3px solid #667eea;
+}
+
+.scoresTable tbody tr {
+  border-bottom: 1px solid #ecf0f1;
+  transition: all 0.3s ease;
+}
+
+.scoresTable tbody tr:hover {
+  background: #f8f9fa;
+  box-shadow: inset 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.booyahRow {
+  background: #fff9e6 !important;
+}
+
+.booyahRow td {
+  font-weight: 600;
+}
+
+.scoresTable td {
+  padding: 15px 20px;
+  vertical-align: middle;
+}
+
+.playerName {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 150px;
+}
+
+.input {
+  width: 100%;
+  max-width: 100px;
+  padding: 10px;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: #f0f3ff;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.booyahBtn {
+  padding: 8px 16px;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  background: white;
+  color: #7f8c8d;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  min-width: 90px;
+}
+
+.booyahBtn:hover {
+  border-color: #667eea;
+  background: #f0f3ff;
+}
+
+.booyahBtn.active {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border-color: #f5576c;
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+}
+
+.info {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+  margin-bottom: 30px;
+}
+
+.info p {
+  margin: 8px 0;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.info strong {
+  color: #667eea;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.submitBtn,
+.cancelBtn {
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  background: #ecf0f1;
+  color: #2c3e50;
+  border: 2px solid #bdc3c7;
+}
+
+.cancelBtn:hover {
+  background: #bdc3c7;
+  color: white;
+  text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  .header h1 {
+    font-size: 1.8rem;
+  }
+
+  .scoresContainer {
+    margin-bottom: 20px;
+  }
+
+  .scoresTable th,
+  .scoresTable td {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .input {
+    max-width: 80px;
+    padding: 8px;
+  }
+
+  .booyahBtn {
+    min-width: 70px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .info {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .info p {
+    font-size: 0.9rem;
+    margin: 6px 0;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .submitBtn,
+  .cancelBtn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 15px 10px;
+  }
+
+  .header h1 {
+    font-size: 1.4rem;
+  }
+
+  .form {
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .scoresTable th,
+  .scoresTable td {
+    padding: 8px 5px;
+    font-size: 0.8rem;
+  }
+
+  .playerName {
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
+
+  .input {
+    max-width: 60px;
+    padding: 6px;
+    font-size: 0.9rem;
+  }
+
+  .booyahBtn {
+    min-width: 60px;
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+
+  .scoresTable th {
+    font-size: 0.85rem;
+    padding: 10px 5px;
+  }
+}
