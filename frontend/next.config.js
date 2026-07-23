@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   swcMinify: true,
-  experimental: {
-    isrMemoryCacheSize: 52 * 1024 * 1024,
-  },
+  staticPageGenerationTimeout: 120,
+  trailingSlash: false,
 };
 
 module.exports = nextConfig;
+
+
