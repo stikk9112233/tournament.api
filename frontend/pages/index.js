@@ -1,3 +1,4 @@
+export const config = { unstable_runtimeJS: false };
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
