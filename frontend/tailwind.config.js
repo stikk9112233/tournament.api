@@ -13,6 +13,7 @@ module.exports = {
         accent: '#FFD700',
         purple: '#6A0DAD',
         cyan: '#00FFFF',
+        'cyan-400': '#00FFFF',
       },
       backgroundImage: {
         'gradient-gaming': 'linear-gradient(135deg, #0a1428 0%, #1a2d4d 50%, #6A0DAD 100%)',
