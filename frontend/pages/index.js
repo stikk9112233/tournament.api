@@ -29,9 +29,9 @@ export default function Home() {
     }
   };
 
-  if (loading) {
-    return <div className="loader">Loading...</div>;
-  }
+  if (auth.loading === true) {
+  return <div className="loader">Loading...</div>;
+}
 
   return (
     <>
