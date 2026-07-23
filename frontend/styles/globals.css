@@ -35,7 +35,7 @@ body {
 }
 
 .btn-secondary {
-  @apply bg-purple-600 text-white hover:bg-purple-700 shadow-lg hover:shadow-xl;
+  @apply bg-purple-700 text-white hover:bg-purple-800 shadow-lg hover:shadow-xl;
 }
 
 .btn-danger {
