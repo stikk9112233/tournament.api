@@ -1,15 +1,22 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../context/auth';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Home() {
-  const auth = useContext(AuthContext) || {};
-  const { user, loading } = auth;
+  const router = useRouter();
   const [tournaments, setTournaments] = useState([]);
   const [tournamentsLoading, setTournamentsLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    // Check if user is logged in
+    if (typeof window !== 'undefined') {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    }
     fetchTournaments();
   }, []);
 
@@ -28,10 +35,6 @@ export default function Home() {
       setTournamentsLoading(false);
     }
   };
-
-  if (auth.loading === true) {
-  return <div className="loader">Loading...</div>;
-}
 
   return (
     <>
