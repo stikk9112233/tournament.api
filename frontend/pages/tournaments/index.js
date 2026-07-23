@@ -10,28 +10,39 @@ import styles from '../../styles/Tournaments.module.css';
 export default function TournamentsPage() {
   const router = useRouter();
   const auth = useContext(AuthContext) || {};
-const { token, user, loading: authLoading } = auth;
+  const { token, user, loading: authLoading, isAuthenticated } = auth;
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-  if (authLoading) return; // wait until auth provider finished loading
-  if (!token) {
-    router.push('/auth/login');
-    return;
-  }
-  fetchTournaments();
-}, [token, authLoading]);
+    console.log('🔍 useEffect triggered - authLoading:', authLoading, 'token:', token);
+    
+    if (authLoading) {
+      console.log('⏳ Still loading auth...');
+      return;
+    }
+    
+    if (!token || !isAuthenticated) {
+      console.log('❌ No token found, redirecting to login');
+      router.push('/auth/login');
+      return;
+    }
+    
+    console.log('✅ Token found, fetching tournaments');
+    fetchTournaments();
+  }, [token, authLoading, isAuthenticated, router]);
 
   const fetchTournaments = async () => {
     try {
       setLoading(true);
+      console.log('📥 Fetching tournaments...');
       const data = await apiClient.tournaments.list();
+      console.log('✅ Tournaments loaded:', data);
       setTournaments(data);
     } catch (err) {
+      console.error('❌ Error loading tournaments:', err);
       setError('Failed to load tournaments');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -44,9 +55,24 @@ const { token, user, loading: authLoading } = auth;
       await apiClient.tournaments.delete(id);
       setTournaments(tournaments.filter(t => t.id !== id));
     } catch (err) {
+      console.error('❌ Error deleting tournament:', err);
       setError('Failed to delete tournament');
     }
   };
+
+  if (authLoading) {
+    return (
+      <>
+        <Head>
+          <title>Loading... - Tournament Platform</title>
+        </Head>
+        <Navbar />
+        <div className={styles.container}>
+          <div className={styles.loading}>⏳ Initializing...</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -79,17 +105,17 @@ const { token, user, loading: authLoading } = auth;
           <div className={styles.grid}>
             {tournaments.map((tournament) => (
               <div key={tournament.id} className={styles.card}>
-                <h3>{tournament.name}</h3>
+                <h3>{tournament.title || tournament.name}</h3>
                 <p className={styles.description}>{tournament.description}</p>
                 
                 <div className={styles.details}>
                   <span>👥 {tournament.max_participants} spots</span>
-                  <span>🎮 {tournament.game}</span>
+                  <span>💰 ₹{tournament.entry_fee}</span>
                 </div>
 
                 <div className={styles.status}>
-                  <span className={`${styles.badge} ${styles[`status-${tournament.status.toLowerCase()}` ]}`}>
-                    {tournament.status}
+                  <span className={`${styles.badge} ${styles[`status-${tournament.status?.toLowerCase()}` ]}`}>
+                    {tournament.status || 'active'}
                   </span>
                 </div>
 
@@ -97,7 +123,7 @@ const { token, user, loading: authLoading } = auth;
                   <Link href={`/tournaments/${tournament.id}`}>
                     <a className="btn btn-secondary">👁️ View</a>
                   </Link>
-                  {user.id === tournament.organizer_id && (
+                  {user && user.id === tournament.organizer_id && (
                     <>
                       <Link href={`/tournaments/${tournament.id}/edit`}>
                         <a className="btn btn-secondary">✏️ Edit</a>
