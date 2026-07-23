@@ -63,6 +63,66 @@ export const apiClient = {
         console.error('Error joining tournament:', error);
         return null;
       }
+    },
+
+    // ============ LEADERBOARD & HISTORY ============
+    getDetails: async (tournamentId) => {
+      try {
+        const response = await fetch(`${API_BASE}/tournaments/${tournamentId}/details`);
+        if (!response.ok) throw new Error('Tournament not found');
+        return await response.json();
+      } catch (error) {
+        console.error('❌ Error fetching tournament details:', error);
+        throw error;
+      }
+    },
+
+    getParticipants: async (tournamentId) => {
+      try {
+        const response = await fetch(`${API_BASE}/tournaments/${tournamentId}/participants`);
+        if (!response.ok) throw new Error('Failed to fetch participants');
+        return await response.json();
+      } catch (error) {
+        console.error('❌ Error fetching participants:', error);
+        throw error;
+      }
+    },
+
+    enterMatchScores: async (matchId, scores) => {
+      try {
+        const response = await fetch(`${API_BASE}/tournaments/${matchId}/enter-score`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(scores)
+        });
+        if (!response.ok) throw new Error('Failed to enter scores');
+        return await response.json();
+      } catch (error) {
+        console.error('❌ Error entering match scores:', error);
+        throw error;
+      }
+    },
+
+    getLeaderboard: async (tournamentId, userId) => {
+      try {
+        const response = await fetch(`${API_BASE}/tournaments/${tournamentId}/leaderboard/${userId}`);
+        if (!response.ok) throw new Error('Failed to fetch leaderboard');
+        return await response.json();
+      } catch (error) {
+        console.error('❌ Error fetching leaderboard:', error);
+        throw error;
+      }
+    },
+
+    getPlayingHistory: async (userId) => {
+      try {
+        const response = await fetch(`${API_BASE}/tournaments/${userId}/playing-history`);
+        if (!response.ok) throw new Error('Failed to fetch playing history');
+        return await response.json();
+      } catch (error) {
+        console.error('❌ Error fetching playing history:', error);
+        throw error;
+      }
     }
   },
 
