@@ -18,7 +18,7 @@ export default function Login() {
       const { token, user } = res.data
       
       // Save to context and localStorage
-      auth.login(user, token)
+      auth.login(token, user)
       
       setMsg('Logged in successfully!')
       // Redirect to home after 1 second
