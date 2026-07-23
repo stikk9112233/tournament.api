@@ -1,4 +1,4 @@
-# 🎮 Tournament API - Free Fire Tournament Platform
+# 🎮  Tournament API - Free Fire Tournament Platform
 
 A comprehensive tournament management system for Free Fire esports tournaments with real-time leaderboards, prize distribution, and match management.
 
