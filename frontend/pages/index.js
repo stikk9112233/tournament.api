@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../context/AuthProvider';
+import { AuthContext } from '../context/auth';
 
 export default function Home() {
   const auth = useContext(AuthContext) || {};
