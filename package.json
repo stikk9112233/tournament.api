@@ -1,11 +1,11 @@
- {
+{
   "name": "tournament.api",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm install && npm run build",
-    "start": "next start -p 3000"
+    "start": "cd frontend && npm run start"
   },
   "dependencies": {
     "next": "^13.4.10",
