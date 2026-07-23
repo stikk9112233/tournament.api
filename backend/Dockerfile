@@ -7,6 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN chmod +x start.sh
+RUN chmod +x /app/start.sh
 
-CMD ["sh", "start.sh"]
+EXPOSE 8000
+
+CMD ["/app/start.sh"]
