@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #0a1428;
+  --secondary: #1a2d4d;
+  --accent: #FFD700;
+  --purple: #6A0DAD;
+  --cyan: #00FFFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--primary);
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.btn {
+  @apply px-4 py-2 rounded-lg font-semibold transition-all duration-300 cursor-pointer border-none;
+}
+
+.btn-primary {
+  @apply bg-yellow-400 text-black hover:bg-yellow-500 shadow-lg hover:shadow-xl;
+}
+
+.btn-secondary {
+  @apply bg-purple-600 text-white hover:bg-purple-700 shadow-lg hover:shadow-xl;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700 shadow-lg hover:shadow-xl;
+}
+
+.card {
+  @apply bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg p-6 border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 shadow-lg;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+textarea,
+select {
+  @apply w-full px-3 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition-colors;
+}
+
+.loader {
+  @apply text-center py-8 text-cyan;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--purple);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
