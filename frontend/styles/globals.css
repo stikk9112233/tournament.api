@@ -35,7 +35,7 @@ body {
 }
 
 .btn-secondary {
-  @apply bg-purple-700 text-white hover:bg-purple-800 shadow-lg hover:shadow-xl;
+  @apply bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl;
 }
 
 .btn-danger {
@@ -43,7 +43,7 @@ body {
 }
 
 .card {
-  @apply bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg p-6 border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 shadow-lg;
+  @apply bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg p-6 border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 shadow-lg;
 }
 
 input[type='text'],
@@ -52,11 +52,11 @@ input[type='password'],
 input[type='number'],
 textarea,
 select {
-  @apply w-full px-3 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition-colors;
+  @apply w-full px-3 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-indigo-500 focus:outline-none transition-colors;
 }
 
 .loader {
-  @apply text-center py-8 text-cyan;
+  @apply text-center py-8 text-cyan-400;
 }
 
 ::-webkit-scrollbar {
