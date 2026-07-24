@@ -13,6 +13,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Import and include route blueprints
+from app.routes import auth, forgot_password, users, tournaments, payments, wallet, leaderboard
+
+app.include_router(auth.router)
+app.include_router(forgot_password.router)
+app.include_router(users.router)
+app.include_router(tournaments.router)
+app.include_router(payments.router)
+app.include_router(wallet.router)
+app.include_router(leaderboard.router)
+
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "service": "tournament-api"}
