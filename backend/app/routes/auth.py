@@ -14,7 +14,7 @@ from app.security import (
 )
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
-router = APIRouter()
+router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 @router.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -71,11 +71,6 @@ def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
 def get_current_user_profile(current_user: User = Depends(get_current_user)):
     return current_user
 
-
-#
-# Password reset endpoints
-#
-
 @router.post("/forgot-password")
 def forgot_password(payload: dict = Body(...), db: Session = Depends(get_db)):
     """
@@ -98,7 +93,6 @@ def forgot_password(payload: dict = Body(...), db: Session = Depends(get_db)):
     db.commit()
     # WARNING: In production do NOT return token in response; send an email instead
     return {"detail": "Reset token generated", "reset_token": reset_token}
-
 
 @router.post("/reset-password")
 def reset_password(payload: dict = Body(...), db: Session = Depends(get_db)):
