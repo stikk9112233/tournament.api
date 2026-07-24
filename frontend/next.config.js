@@ -3,9 +3,7 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   staticPageGenerationTimeout: 120,
-  trailingSlash: false,
+  trailingSlash: false
 };
 
 module.exports = nextConfig;
-
-
