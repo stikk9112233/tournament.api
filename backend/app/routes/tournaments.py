@@ -21,7 +21,8 @@ def create_tournament(tournament: TournamentCreate, db: Session = Depends(get_db
         prize_pool=tournament.entry_fee * tournament.max_participants * 0.85,
         start_date=tournament.start_date,
         registration_deadline=tournament.registration_deadline,
-        upi_id=""
+        upi_id="",
+        status="active"
     )
     
     db.add(new_tournament)
@@ -40,8 +41,12 @@ def get_tournament(tournament_id: int, db: Session = Depends(get_db)):
 @router.get("/", response_model=list)
 def list_tournaments(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     """List all tournaments"""
-    tournaments = db.query(Tournament).offset(skip).limit(limit).all()
-    return tournaments
+    try:
+        tournaments = db.query(Tournament).offset(skip).limit(limit).all()
+        return tournaments if tournaments else []
+    except Exception as e:
+        print(f"Error fetching tournaments: {e}")
+        return []
 
 @router.post("/{tournament_id}/matches", response_model=MatchResponse)
 def create_match(tournament_id: int, match: MatchCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -59,7 +64,8 @@ def create_match(tournament_id: int, match: MatchCreate, db: Session = Depends(g
         game_mode=match.game_mode,
         room_id=match.room_id,
         room_password=match.room_password,
-        scheduled_time=match.scheduled_time
+        scheduled_time=match.scheduled_time,
+        status="pending"
     )
     
     db.add(new_match)
@@ -95,7 +101,8 @@ def join_tournament(tournament_id: int, freefire_uid: str, db: Session = Depends
     participant = Participant(
         user_id=current_user.id,
         tournament_id=tournament_id,
-        freefire_uid=freefire_uid
+        freefire_uid=freefire_uid,
+        payment_verified=False
     )
     
     tournament.current_participants += 1
@@ -104,7 +111,7 @@ def join_tournament(tournament_id: int, freefire_uid: str, db: Session = Depends
     db.commit()
     db.refresh(participant)
     
-    return participant
+    return {"message": "Successfully joined tournament", "participant_id": participant.id}
 
 @router.get("/{tournament_id}/participants")
 def get_participants(tournament_id: int, db: Session = Depends(get_db)):
@@ -151,23 +158,3 @@ def get_leaderboard(tournament_id: int, db: Session = Depends(get_db)):
         Participant.tournament_id == tournament_id
     ).order_by(Participant.rank).all()
     return leaderboard
-
-@router.post("/{tournament_id}/matches/{match_id}/distribute-prizes")
-def distribute_prizes(tournament_id: int, match_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    """Distribute prizes for a completed match"""
-    tournament = db.query(Tournament).filter(Tournament.id == tournament_id).first()
-    
-    if not tournament:
-        raise HTTPException(status_code=404, detail="Tournament not found")
-    
-    if tournament.organizer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized")
-    
-    match = db.query(Match).filter(Match.id == match_id).first()
-    if not match:
-        raise HTTPException(status_code=404, detail="Match not found")
-    
-    match.status = "completed"
-    db.commit()
-    
-    return {"message": "Prizes distributed successfully"}
