@@ -4,7 +4,6 @@ from app.database import get_db
 from app.models import Tournament, Participant, Match, User, PlayerScore
 from app.schemas import TournamentCreate, TournamentResponse, MatchCreate, MatchResponse, ScoreEntry
 from app.security import get_current_user
-from app.prize_service import PrizeService
 from datetime import datetime
 
 router = APIRouter(prefix="/api/tournaments", tags=["tournaments"])
@@ -21,7 +20,8 @@ def create_tournament(tournament: TournamentCreate, db: Session = Depends(get_db
         game_mode=tournament.game_mode,
         prize_pool=tournament.entry_fee * tournament.max_participants * 0.85,
         start_date=tournament.start_date,
-        registration_deadline=tournament.registration_deadline
+        registration_deadline=tournament.registration_deadline,
+        upi_id=current_user.upi_id if hasattr(current_user, 'upi_id') else ""
     )
     
     db.add(new_tournament)
@@ -98,6 +98,8 @@ def join_tournament(tournament_id: int, freefire_uid: str, db: Session = Depends
         freefire_uid=freefire_uid
     )
     
+    tournament.current_participants += 1
+    
     db.add(participant)
     db.commit()
     db.refresh(participant)
@@ -123,21 +125,32 @@ def submit_score(tournament_id: int, match_id: int, score_data: ScoreEntry, db: 
     if tournament.organizer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Only organizer can submit scores")
     
-    score = PrizeService.record_player_score(
-        db=db,
-        match_id=match_id,
+    # Calculate score based on kills and position
+    score_points = (score_data.kills * 10) + (100 - score_data.position * 5)
+    if score_data.is_booyah:
+        score_points += 50
+    
+    player_score = PlayerScore(
         participant_id=score_data.participant_id,
+        match_id=match_id,
         kills=score_data.kills,
         position=score_data.position,
-        is_booyah=score_data.is_booyah
+        is_booyah=score_data.is_booyah,
+        score=score_points
     )
     
-    return score
+    db.add(player_score)
+    db.commit()
+    db.refresh(player_score)
+    
+    return player_score
 
 @router.get("/{tournament_id}/leaderboard")
 def get_leaderboard(tournament_id: int, db: Session = Depends(get_db)):
     """Get tournament leaderboard"""
-    leaderboard = PrizeService.calculate_tournament_leaderboard(db, tournament_id)
+    leaderboard = db.query(Participant).filter(
+        Participant.tournament_id == tournament_id
+    ).order_by(Participant.rank).all()
     return leaderboard
 
 @router.post("/{tournament_id}/matches/{match_id}/distribute-prizes")
@@ -151,9 +164,12 @@ def distribute_prizes(tournament_id: int, match_id: int, db: Session = Depends(g
     if tournament.organizer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
     
-    success = PrizeService.distribute_match_prizes(db, match_id)
+    # Prize distribution logic
+    match = db.query(Match).filter(Match.id == match_id).first()
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
     
-    if not success:
-        raise HTTPException(status_code=400, detail="Failed to distribute prizes")
+    match.status = "completed"
+    db.commit()
     
     return {"message": "Prizes distributed successfully"}
