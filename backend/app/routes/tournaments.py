@@ -21,7 +21,7 @@ def create_tournament(tournament: TournamentCreate, db: Session = Depends(get_db
         prize_pool=tournament.entry_fee * tournament.max_participants * 0.85,
         start_date=tournament.start_date,
         registration_deadline=tournament.registration_deadline,
-        upi_id=current_user.upi_id if hasattr(current_user, 'upi_id') else ""
+        upi_id=""
     )
     
     db.add(new_tournament)
@@ -125,7 +125,6 @@ def submit_score(tournament_id: int, match_id: int, score_data: ScoreEntry, db: 
     if tournament.organizer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Only organizer can submit scores")
     
-    # Calculate score based on kills and position
     score_points = (score_data.kills * 10) + (100 - score_data.position * 5)
     if score_data.is_booyah:
         score_points += 50
@@ -164,7 +163,6 @@ def distribute_prizes(tournament_id: int, match_id: int, db: Session = Depends(g
     if tournament.organizer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
     
-    # Prize distribution logic
     match = db.query(Match).filter(Match.id == match_id).first()
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
