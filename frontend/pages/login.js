@@ -14,7 +14,8 @@ export default function Login() {
   const submit = async (e) => {
     e.preventDefault()
     try {
-      const res = await axios.post('/api/proxy/auth/login', { email, password: pass })
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const res = await axios.post(`${apiUrl}/auth/login`, { email, password: pass })
       const { token, user } = res.data
       
       // Save to context and localStorage
