@@ -5,15 +5,10 @@ from app.database import init_db
 
 app = FastAPI(title="Tournament API", version="1.0.0")
 
-# CORS middleware - सभी origins को allow करो
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://tournament-frontend-zcvk.onrender.com",
-        "*"
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -22,27 +17,12 @@ app.add_middleware(
 # Initialize database on startup
 @app.on_event("startup")
 def startup_event():
-    init_db()
+    try:
+        init_db()
+    except Exception as e:
+        print(f"Database init error: {e}")
 
-# Import and include route blueprints
-try:
-    from app.routes.auth import router as auth_router
-    app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
-except Exception as e:
-    print(f"Auth router error: {e}")
-
-try:
-    from app.routes.users import router as users_router
-    app.include_router(users_router, prefix="/api/users", tags=["users"])
-except Exception as e:
-    print(f"Users router error: {e}")
-
-try:
-    from app.routes.tournaments import router as tournaments_router
-    app.include_router(tournaments_router, tags=["tournaments"])
-except Exception as e:
-    print(f"Tournaments router error: {e}")
-
+# Health check पहले register करो
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "service": "tournament-api"}
@@ -50,6 +30,25 @@ def health_check():
 @app.get("/api/test")
 def test():
     return {"message": "API is working!", "version": "1.0.0"}
+
+# Import and include route blueprints
+try:
+    from app.routes.auth import router as auth_router
+    app.include_router(auth_router, prefix="/api/auth")
+except Exception as e:
+    print(f"Auth router error: {e}")
+
+try:
+    from app.routes.tournaments import router as tournaments_router
+    app.include_router(tournaments_router)
+except Exception as e:
+    print(f"Tournaments router error: {e}")
+
+try:
+    from app.routes.users import router as users_router
+    app.include_router(users_router, prefix="/api/users")
+except Exception as e:
+    print(f"Users router error: {e}")
 
 if __name__ == "__main__":
     import uvicorn
