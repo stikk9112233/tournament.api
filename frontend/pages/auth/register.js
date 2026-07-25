@@ -10,7 +10,7 @@ import styles from '../../styles/Auth.module.css';
 export default function Register() {
   const router = useRouter();
   const auth = useContext(AuthContext) || {};
-const { login } = auth;
+  const { login } = auth;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -31,26 +31,73 @@ const { login } = auth;
     setError('');
 
     try {
-      const response = await apiClient.auth.register(
+      console.log('Registering user:', formData);
+      
+      // ✅ Register करो
+      const registerResponse = await apiClient.auth.register(
         formData.email,
         formData.username,
         formData.password,
         formData.freefire_uid
       );
       
-      if (response.id) {
-        // Auto-login after registration
-        const loginResponse = await apiClient.auth.login(formData.email, formData.password);
-        if (loginResponse.access_token) {
-          login(loginResponse.access_token, loginResponse.user);
-          router.push('/');
+      console.log('Register response:', registerResponse);
+      
+      // ✅ सही तरीके से response check करो
+      if (registerResponse && registerResponse.id) {
+        console.log('Registration successful, logging in...');
+        
+        try {
+          // ✅ Auto-login करो registration के बाद
+          const loginResponse = await apiClient.auth.login(
+            formData.email, 
+            formData.password
+          );
+          
+          console.log('Login response:', loginResponse);
+          
+          if (loginResponse && loginResponse.access_token) {
+            console.log('Login successful, storing token...');
+            
+            // ✅ Token और user info store करो
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('token', loginResponse.access_token);
+              localStorage.setItem('user', JSON.stringify(loginResponse.user));
+            }
+            
+            // ✅ Auth context को update करो
+            if (login) {
+              login(loginResponse.access_token, loginResponse.user);
+            }
+            
+            // ✅ Home page पर redirect करो
+            router.push('/');
+          } else {
+            setError('Login failed after registration. Please login manually.');
+            router.push('/auth/login');
+          }
+        } catch (loginErr) {
+          console.error('Auto-login error:', loginErr);
+          setError('Registration successful but auto-login failed. Please login manually.');
+          router.push('/auth/login');
         }
       } else {
-        setError(response.detail || 'Registration failed');
+        console.error('Invalid register response:', registerResponse);
+        setError(registerResponse?.detail || 'Registration failed. Please try again.');
       }
     } catch (err) {
-      setError('Connection error. Please try again.');
-      console.error(err);
+      console.error('Registration error:', err);
+      
+      // ✅ विभिन्न error types को handle करो
+      if (err.response?.status === 400) {
+        setError(err.response.data?.detail || 'Email or username already exists.');
+      } else if (err.message === 'Network Error') {
+        setError('Connection error. Please check your internet and try again.');
+      } else if (err.code === 'ECONNABORTED') {
+        setError('Request timeout. Server took too long to respond.');
+      } else {
+        setError('Connection error. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -81,6 +128,7 @@ const { login } = auth;
                 onChange={handleChange}
                 placeholder="your@email.com"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -94,6 +142,7 @@ const { login } = auth;
                 onChange={handleChange}
                 placeholder="sunny123"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -107,6 +156,7 @@ const { login } = auth;
                 onChange={handleChange}
                 placeholder="Strong password"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -120,6 +170,7 @@ const { login } = auth;
                 onChange={handleChange}
                 placeholder="1234567890"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -141,4 +192,3 @@ const { login } = auth;
     </>
   );
 }
-
