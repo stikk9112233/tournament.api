@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const const API_URL = 'https://tournament-backend-991a.onrender.com';
+const API_URL = 'https://tournament-backend-991a.onrender.com';
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
