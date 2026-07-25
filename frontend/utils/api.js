@@ -7,7 +7,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000,  // ✅ 30 seconds timeout add किया
+  timeout: 30000,  // 30 seconds timeout
 });
 
 api.interceptors.request.use((config) => {
@@ -20,26 +20,45 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Fixed Response Interceptor
+// ✅ Improved Response Interceptor with Better Error Handling
 api.interceptors.response.use(
   (response) => {
-    console.log('API Response:', response.data);
-    return response.data;  // ✅ सही तरीके से data return करो
+    console.log('✅ API Success:', response.config.url, response.data);
+    return response.data;
   },
   (error) => {
-    console.error('API Error:', error);
+    console.error('❌ API Error:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      url: error.config?.url,
+    });
     
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/auth/login';
+    // ✅ Handle different error types
+    if (error.response) {
+      // Server responded with error status
+      console.error('Server Error:', error.response.status, error.response.data);
+      
+      if (error.response.status === 401) {
+        // Unauthorized - clear auth and redirect
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/auth/login';
+        }
       }
-    }
-    
-    // ✅ Network errors भी properly handle करो
-    if (error.message === 'Network Error' || error.code === 'ECONNABORTED') {
-      console.error('Network connection error');
+    } else if (error.request) {
+      // Request made but no response received
+      console.error('No Response from Server:', error.request);
+      error.message = 'Server not responding. Please try again.';
+    } else if (error.message === 'Network Error') {
+      // Network error
+      console.error('Network Error');
+      error.message = 'Network connection error. Please check your internet.';
+    } else if (error.code === 'ECONNABORTED') {
+      // Timeout
+      console.error('Request Timeout');
+      error.message = 'Request timeout. Server took too long to respond.';
     }
     
     throw error;
