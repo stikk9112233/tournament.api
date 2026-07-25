@@ -38,7 +38,7 @@ def test():
 # Import and include route blueprints
 try:
     from app.routes.auth import router as auth_router
-    app.include_router(auth_router, prefix="/api/auth")
+    app.include_router(auth_router, prefix="/auth")
 except Exception as e:
     print(f"Auth router error: {e}")
 
