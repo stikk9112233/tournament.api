@@ -7,6 +7,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 30000,  // ✅ 30 seconds timeout add किया
 });
 
 api.interceptors.request.use((config) => {
@@ -19,9 +20,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// ✅ Fixed Response Interceptor
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    console.log('API Response:', response.data);
+    return response.data;  // ✅ सही तरीके से data return करो
+  },
   (error) => {
+    console.error('API Error:', error);
+    
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
@@ -29,6 +36,12 @@ api.interceptors.response.use(
         window.location.href = '/auth/login';
       }
     }
+    
+    // ✅ Network errors भी properly handle करो
+    if (error.message === 'Network Error' || error.code === 'ECONNABORTED') {
+      console.error('Network connection error');
+    }
+    
     throw error;
   }
 );
