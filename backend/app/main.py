@@ -11,8 +11,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:8000",
-        "https://tournament-frontend-zcvk.onrender.com",
-        "https://tournament-api-rho.vercel.app"
+        "https://tournament-frontend-zcvk.onrender.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -27,7 +26,7 @@ def startup_event():
     except Exception as e:
         print(f"Database init error: {e}")
 
-# Health check पहले register करो
+# Health check
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "service": "tournament-api"}
