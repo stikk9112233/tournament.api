@@ -5,10 +5,15 @@ from app.database import init_db
 
 app = FastAPI(title="Tournament API", version="1.0.0")
 
-# CORS middleware
+# CORS middleware - FIXED
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "https://tournament-frontend-zcvk.onrender.com",
+        "https://tournament-api-rho.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,7 +45,7 @@ except Exception as e:
 
 try:
     from app.routes.tournaments import router as tournaments_router
-    app.include_router(tournaments_router)
+    app.include_router(tournaments_router, prefix="/api/tournaments")
 except Exception as e:
     print(f"Tournaments router error: {e}")
 
