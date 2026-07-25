@@ -14,7 +14,7 @@ from app.security import (
 )
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
-router = APIRouter(prefix="/api/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
