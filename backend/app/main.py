@@ -5,13 +5,15 @@ from app.database import init_db
 
 app = FastAPI(title="Tournament API", version="1.0.0")
 
-# CORS middleware - FIXED
+# CORS middleware - FIXED for Render.com
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:8000",
-        "https://tournament-frontend-zcvk.onrender.com"
+        "https://tournament-frontend-zcvk.onrender.com",  # ✅ सही Frontend URL
+        "https://tournament-backend-991a.onrender.com",   # Backend भी add करो
+        "*"  # Testing के लिए (production में हटा देना)
     ],
     allow_credentials=True,
     allow_methods=["*"],
